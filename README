@@ -9,6 +9,21 @@ A response flow looks like this:
 
 Running:
   Environment:
-   - BUILD_CMD:         string that is passed to 'execSync' as command
-   - BUILD_CWD:         working directory for 'execSync' command
-   - BUILD_MGR_PORT:    port the build manager listens for work on
+   - BUILD_CMD:         String that is passed to 'child_process.exec' as
+                        command for build.
+                        This command should take 1 argument, that being the
+                        git revision to build for.
+   - BUILD_MGR_PORT:    Port the build manager listens for work on
+   - DEPLOY_CMD:        String that is passed to 'child_process.exec' as
+                        command to deploy.
+                        This command takes 1 argument, that being the target
+                        git revision.
+
+  Volumes:
+  - /var/run/docker.sock:       mount the host docker socket here for
+                                docker-in-docker
+   - /app/build_dir:            working directory for running BUILD_CMD
+   - /app/public:               directory intended to be publicly available
+                                (ex. served by nginx)
+   - /app/host:                 For docker in docker, host volumes are mounted
+                                here

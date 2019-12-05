@@ -13,4 +13,7 @@ RUN apk --update add \
         docker
 WORKDIR /app
 COPY --from=0 /app/target/main.js /app/bin/main.js
+VOLUME /app/public
+VOLUME /app/build_dir
+VOLUME /app/host
 ENTRYPOINT [ "node", "/app/bin/main.js" ]

@@ -7,10 +7,14 @@ import { pop_build_task, build_q_is_empty } from "./work_queue";
 
 
 const BUILD_CMD = env['BUILD_CMD'];
-const BUILD_CWD = env['BUILD_CWD'];
+const DEPLOY_CMD = env['DEPLOY_CMD'];
 
-console.log(`using build command ${BUILD_CMD}`);
-console.log(`building from directory ${BUILD_CWD}`);
+console.log(`using build command:
+     ${BUILD_CMD}
+`);
+console.log(`using deploy command:
+     ${DEPLOY_CMD}
+`);
 
 export function check_for_work(): void {
   if (app_state.is_building) {  // no concurrency
@@ -21,15 +25,32 @@ export function check_for_work(): void {
     return;
   }
   app_state.is_building = true;
-  const work: BuildWork = pop_build_task();
-  console.log(`beginning build for ${work.target_git_rev}`);
-  const result = execSync(
-    BUILD_CMD, {
-      cwd: BUILD_CWD,
-    }
-  ).toString();
-  console.log('build output');
-  console.log(result);
-  app_state.is_building = false;
-  check_for_work();
+  try {
+    const work: BuildWork = pop_build_task();
+    const run_cmd = `${BUILD_CMD} ${work.target_git_rev}`
+    console.log(`beginning build for ${work.target_git_rev}.  Running ${run_cmd}`);
+    const result = execSync(
+      run_cmd, {
+        cwd: '/app/build_dir',
+      }
+    );
+    console.log('build output');
+    console.log(result.toString());
+    // in the future, the following should be made into a separate 'deploy' task
+    const deploy_cmd = `${DEPLOY_CMD} ${work.target_git_rev}`;
+    console.log(`beginning deploy for ${work.target_git_rev}.  Running ${deploy_cmd}`);
+    const deploy_output = execSync(
+      deploy_cmd, {
+        cwd: '/app/build_dir',
+      }
+    );
+    console.log('deploy output');
+    console.log(deploy_output);
+  } catch (e) {
+    console.error('died doing work');
+    console.trace(e);
+  } finally {
+    app_state.is_building = false;
+    check_for_work();
+  }
 }
