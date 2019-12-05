@@ -1,0 +1,8 @@
+This coordinates a CI deployment for a webapp.
+
+A response flow looks like this:
+  - Receive request to build for a specific git rev
+  - Validate request
+  - Delegate to some kind of build runner to perform this build
+  - If successful, extract the resulting assets to a served html directory
+  - If unsuccessful, provide the build log as html in the served html directory
