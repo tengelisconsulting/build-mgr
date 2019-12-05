@@ -6,3 +6,9 @@ A response flow looks like this:
   - Delegate to some kind of build runner to perform this build
   - If successful, extract the resulting assets to a served html directory
   - If unsuccessful, provide the build log as html in the served html directory
+
+Running:
+  Environment:
+   - BUILD_CMD:         string that is passed to 'execSync' as command
+   - BUILD_CWD:         working directory for 'execSync' command
+   - BUILD_MGR_PORT:    port the build manager listens for work on
