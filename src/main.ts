@@ -4,6 +4,7 @@ import * as Koa  from 'koa';
 import * as KoaRouter from 'koa-router';
 import * as koaBodyParser from 'koa-bodyparser'
 import { deploy } from './lib/handlers/deploy';
+import { check_for_work } from './lib/core';
 
 
 const BUILD_MGR_PORT = parseInt(env['BUILD_MGR_PORT']);
@@ -11,11 +12,8 @@ const BUILD_MGR_PORT = parseInt(env['BUILD_MGR_PORT']);
 const app = new Koa();
 const router = new KoaRouter();
 
-console.log('app');
-
-
 router
-  .post('/deploy', deploy)
+  .post('/dev/deploy', deploy)
 ;
 
 app

@@ -22,8 +22,6 @@ Running:
   Volumes:
   - /var/run/docker.sock:       mount the host docker socket here for
                                 docker-in-docker
-   - /app/build_dir:            working directory for running BUILD_CMD
+   - /app/build_dir:            workspace for build operations
    - /app/public:               directory intended to be publicly available
                                 (ex. served by nginx)
-   - /app/host:                 For docker in docker, host volumes are mounted
-                                here

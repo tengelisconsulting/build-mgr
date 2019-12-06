@@ -20,4 +20,7 @@ export async function deploy(
     target_git_rev: target_git_rev,
   });
   check_for_work();
+  ctx.response.body = {
+    status: 'OK',
+  };
 }
