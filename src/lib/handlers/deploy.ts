@@ -10,12 +10,11 @@ export async function deploy(
   const body_hash: string = JSON.stringify(
     ctx.request.body
   );
-  console.log('body hash');
-  console.log(body_hash);
   const target_git_rev = ctx.request.body
     .target_git_rev;
-  console.log('target git rev');
-  console.log(target_git_rev);
+  if (!target_git_rev) {
+    ctx.throw(400);
+  }
   push_build_task({
     target_git_rev: target_git_rev,
   });
