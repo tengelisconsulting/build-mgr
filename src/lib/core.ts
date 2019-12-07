@@ -16,13 +16,24 @@ console.log(`using deploy command:
      ${DEPLOY_CMD}
 `);
 
-async function async_exec(cmd: string, args: any): Promise<string> {
+interface CmdOutput {
+  stderr: string;
+  stdout: string;
+}
+
+async function async_exec(cmd: string, args: any): Promise<CmdOutput> {
   return new Promise((resolve, reject) => {
     const child = exec(cmd, args, (err, stdout, stderr) => {
       if (err) {
-        reject(stderr.toString());
+        reject({
+          stdout: stdout.toString(),
+          stderr: stderr.toString(),
+        });
       } else {
-        resolve(stdout.toString());
+        resolve({
+          stderr: stderr.toString(),
+          stdout: stdout.toString(),
+        });
       }
     });
   });
@@ -37,17 +48,18 @@ export async function check_for_work(): Promise<void> {
     return;
   }
   app_state.is_building = true;
+  let build_output: CmdOutput;
   try {
     const work: BuildWork = pop_build_task();
     const run_cmd = `${BUILD_CMD} ${work.target_git_rev}`
     console.log(`beginning build for ${work.target_git_rev}.  Running ${run_cmd}`);
-    const result = await async_exec(
+    build_output = await async_exec(
       run_cmd, {
         cwd: '/app/build_dir',
       }
     );
     console.log('build output');
-    console.log(result);
+    console.log(build_output);
     // in the future, the following should be made into a separate 'deploy' task
     const deploy_cmd = `${DEPLOY_CMD} ${work.target_git_rev}`;
     console.log(`beginning deploy for ${work.target_git_rev}.  Running ${deploy_cmd}`);
@@ -61,6 +73,8 @@ export async function check_for_work(): Promise<void> {
   } catch (e) {
     console.error('died doing work');
     console.trace(e);
+    console.log('failed build output:');
+    console.log(build_output);
   } finally {
     app_state.is_building = false;
     check_for_work();
