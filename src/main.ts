@@ -4,7 +4,7 @@ import * as Koa  from 'koa';
 import * as KoaRouter from 'koa-router';
 import * as koaBodyParser from 'koa-bodyparser'
 import { deploy } from './lib/handlers/deploy';
-import { check_for_work } from './lib/core';
+import { top_level_mware } from './lib/middleware/top_level_mware';
 
 
 const BUILD_MGR_PORT = parseInt(env['BUILD_MGR_PORT']);
@@ -17,6 +17,7 @@ router
 ;
 
 app
+  .use(top_level_mware)
   .use(koaBodyParser())
   .use(router.routes())
   .use(router.allowedMethods())

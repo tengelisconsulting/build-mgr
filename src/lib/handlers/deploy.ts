@@ -2,14 +2,15 @@ import * as Koa from 'koa';
 
 import { check_for_work } from '../core';
 import { push_build_task } from '../work_queue';
+import { verify_request } from '../sec/verify_request';
 
 
 export async function deploy(
   ctx: Koa.ParameterizedContext<any>, _next: Koa.Next
 ): Promise<void> {
-  const body_hash: string = JSON.stringify(
-    ctx.request.body
-  );
+  if (!verify_request(ctx)) {
+    ctx.throw(401);
+  }
   const target_git_rev = ctx.request.body
     .target_git_rev;
   if (!target_git_rev) {

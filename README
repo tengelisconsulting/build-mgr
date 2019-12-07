@@ -9,6 +9,10 @@ A response flow looks like this:
 
 Running:
   Environment:
+   - ACCESS_KEY         Used to verify requests.
+                        Specifically, SHA256 HMAC of a POST request body is
+                        computed using this as key, and a matching digest will
+                        be expected in the header 'X-signature'.
    - BUILD_CMD:         String that is passed to 'child_process.exec' as
                         command for build.
                         This command should take 1 argument, that being the
